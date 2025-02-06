@@ -1,0 +1,316 @@
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-toggle-btn {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: inherit;
+}
+
+.custom-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+    z-index: 1000;
+}
+
+.custom-dropdown-menu.show {
+    display: block;
+}
+
+.custom-dropdown-menu li {
+    padding: 10px 15px;
+}
+
+.custom-dropdown-menu li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.custom-dropdown-menu li a:hover {
+    background: #f5f5f5;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close {
+    background: none;
+    border: none;
+    font-size: 20px;
+}
+.da{
+    background-color: darkviolet;
+    color: white;
+}
+/* Violet Buttons */
+.btn-violet {
+    background-color: #8a2be2;
+    /* Violet */
+    color: #fff;
+    border-color: #8a2be2;
+}
+
+.btn-violet:hover {
+    background-color: #7a26cc;
+    /* Darker Violet */
+    border-color: #7a26cc;
+}
+
+.btn-outline-violet {
+    background-color: transparent;
+    color: #8a2be2;
+    /* Violet */
+    border-color: #8a2be2;
+}
+
+.btn-outline-violet:hover {
+    background-color: #8a2be2;
+    color: #fff;
+}
+/* Add this to your styles.scss or a relevant CSS file */
+.modal-fade {
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    z-index: 1050;
+}
+
+.modal-content {
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    font-size: 14px;
+    /* Decrease the size of the letters */
+}
+
+.modal-header .close {
+    font-size: 20px;
+}
+
+.modal-header .btn-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+}
+.filter-dropdown {
+    position: relative;
+}
+
+.filter-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 10px;
+    z-index: 1000;
+}
+
+.filter-header h6 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    /* Ensures the options are displayed in a column */
+    gap: 10px;
+    /* Adds space between each option */
+}
+
+.form-options {
+    display: flex;
+    align-items: center;
+}
+
+.form-check-input {
+    margin-right: 5px;
+}
+
+.filter-dropdown button {
+    height: 38px;
+
+    background-color:#8a2be2;
+}
+.searchTerm{
+
+}
+.filter-group {
+  .btn {
+    padding: 4px 12px;
+    font-size: 13px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+   
+    &.active {
+      background: #f8f9fa;
+      border-color: #e0e0e0;
+    }
+   
+    &:hover {
+      background: #f8f9fa;
+    }
+  }
+}
+/* Centering the chat section */
+.chat {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 50vh; /* Full viewport height */
+    text-align: center;
+    flex-direction: column;
+    margin-top: 0px;
+
+  }
+  
+  /* Style for the chat button */
+  .chat button {
+    background-color: #7a26cc; /* Violet color */
+    border: 2px solid #7a26cc; /* Border same as button color */
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 80%; /* Adjust width of button */
+    max-width: 400px; /* Maximum width of button */
+  }
+  
+  .chat button:hover {
+    background-color: #ffffff; /* Change background color on hover */
+    color: #7a26cc; /* Change text color on hover */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add subtle shadow effect */
+  }
+  
+  .chat button:active {
+    transform: scale(0.98); /* Slightly scale down the button when clicked */
+  }
+/* General card styling */
+
+
+.files-upload-container {
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 3px;
+    width:20%;
+    max-width: 100%;
+    margin: 10px auto ;
+    display: inline-block;
+    box-sizing: border-box;
+    display: block; 
+
+  }
+  
+  h2 {
+    font-weight: normal;
+    font-size: 20px;
+    margin: 20px 20px ;
+
+  }
+  
+  .action-buttons button {
+    font-size: 15px;
+    padding: 10px 10px;
+    margin-bottom: 20px;
+  }
+  
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+  }
+  
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 20px ;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+  }
+  
+  .file-icon img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .file-info label {
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+  
+  .text-muted {
+    font-size: 10px;
+  }
+  
+  .modal-content {
+    padding: 8px;
+  }
+ 
