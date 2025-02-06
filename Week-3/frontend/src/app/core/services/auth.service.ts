@@ -85,5 +85,14 @@ export class AuthService {
   getUserId(): string | null {
     return localStorage.getItem('userId');
   }
+
+  getUserFromToken(): any {
+    const id = localStorage.getItem('userId');
+    const username = localStorage.getItem('first_name');
+    return {
+      id: id,
+      username: username
+    };
+  }
  
 }

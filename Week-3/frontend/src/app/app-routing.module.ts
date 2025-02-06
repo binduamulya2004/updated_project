@@ -15,7 +15,10 @@ const routes: Routes = [
   { path: '', redirectTo: '/register', pathMatch: 'full' },
   {path:'forgetpassword', component:ForgetpasswordComponent},
   {path:'reset-password/:id/:accessToken', component:ResetpasswordComponent},
-  {path:'chat', component:ChatComponent},
+  { 
+    path: 'chat', 
+    loadChildren: () => import('../app/features/auth/components/chat/chat.module').then(m => m.ChatModule) 
+  },  
   {path:'filestatus', component:FilestatusComponent},
 
 ];

@@ -30,7 +30,7 @@ import { FilestatusComponent } from './features/auth/components/filestatus/files
     DashboardComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
-    ChatComponent,
+    // ChatComponent,
     FilestatusComponent
     
     

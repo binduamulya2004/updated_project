@@ -1276,7 +1276,7 @@ redirectTochatApp(){
 
 redirectTochatAppp() {
   console.log('Button clicked');
-  this.router.navigate(['/chat1']);
+  this.router.navigate(['/chat']);
 }
 
 
