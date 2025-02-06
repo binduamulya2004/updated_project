@@ -57,7 +57,20 @@
                     <small *ngIf="signupForm.get('role')?.invalid && signupForm.get('role')?.touched"
                         class="text-danger">Role is required.</small>
                 </div>
-                
+                <!-- Branch Selection -->
+                <div class="mb-3">
+                    <label for="branch" class="form-label">Branch *</label>
+                    <select id="branch" class="form-control" formControlName="b_id">
+                        <option value="1">INDIA</option>
+                        <option value="2">USA</option>
+                        <option value="3">AUSTRALIA</option>
+                        <option value="4">JAPAN</option>
+                    </select>
+                    <small *ngIf="signupForm.get('b_id')?.invalid && signupForm.get('b_id')?.touched" class="text-danger">
+                        Branch selection is required.
+                    </small>
+                </div>
+
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-primary w-100" [disabled]="signupForm.invalid">
                     Create account

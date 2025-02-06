@@ -67,47 +67,91 @@ module.exports = {
   uploadToS3,
 
 
-  async signup(req, res, next) {
-    try {
+//   async signup(req, res, next) {
+//     try {
+//       const { error } = signupValidation.validate(req.body);
+//       if (error) return res.status(400).json({ message: error.details[0].message });
+  
+//         const { first_name, last_name, email, password, role } = req.body;
+
+//         if (!first_name || !last_name || !email || !password || !role) {
+//             return res.status(400).json({ message: "All fields are required" });
+//         }
+//         const username = `${first_name} ${last_name}`;
+//         console.log('Creating user with role:', role);
+  
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const newUser = await userModel.createUser({
+//             first_name,
+//             last_name,
+//             email,
+//             password: hashedPassword,
+//             username,
+//             role
+//         });
+
+//         if (!newUser) {
+//             return res.status(500).json({ message: "Error creating user" });
+//         }
+
+//         res.status(201).json({
+//             message: "User created successfully",
+//             userId: newUser.user_id,
+//             first_name: first_name,
+//             role:role
+//         });
+
+//     } catch (err) {
+//         console.error("Signup Error:", err);
+//         next(err);
+//     }
+// },
+
+
+async signup(req, res, next) {
+  try {
       const { error } = signupValidation.validate(req.body);
       if (error) return res.status(400).json({ message: error.details[0].message });
-  
-        const { first_name, last_name, email, password, role } = req.body;
 
-        if (!first_name || !last_name || !email || !password || !role) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
-        const username = `${first_name} ${last_name}`;
-        console.log('Creating user with role:', role);
-  
+      const { first_name, last_name, email, password, role, b_id } = req.body;
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await userModel.createUser({
-            first_name,
-            last_name,
-            email,
-            password: hashedPassword,
-            username,
-            role
-        });
+      if (!first_name || !last_name || !email || !password || !role || !b_id) {
+          return res.status(400).json({ message: "All fields including branch are required" });
+      }
 
-        if (!newUser) {
-            return res.status(500).json({ message: "Error creating user" });
-        }
+      const username = `${first_name} ${last_name}`;
+      console.log('Creating user with role:', role, 'and branch ID:', b_id);
 
-        res.status(201).json({
-            message: "User created successfully",
-            userId: newUser.user_id,
-            first_name: first_name,
-            role:role
-        });
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await userModel.createUser({
+          first_name,
+          last_name,
+          email,
+          password: hashedPassword,
+          username,
+          role,
+          b_id
+      });
 
-    } catch (err) {
-        console.error("Signup Error:", err);
-        next(err);
-    }
-},
+      if (!newUser) {
+          return res.status(500).json({ message: "Error creating user" });
+      }
 
+      res.status(201).json({
+          message: "User created successfully",
+          userId: newUser.user_id,
+          first_name: first_name,
+          role: role,
+          b_id: b_id // Send back branch ID
+      });
+
+  } catch (err) {
+      console.error("Signup Error:", err);
+      next(err);
+  }
+}
+,
 
   async login(req, res, next) {
     try {
@@ -133,7 +177,8 @@ module.exports = {
             refreshToken, 
             userId: user.user_id, 
             role: user.role,
-            first_name: user.first_name  // Include first_name in response
+            first_name: user.first_name , // Include first_name in response
+            b_id:user.b_id
         });
     } catch (err) {
         next(err);
@@ -359,134 +404,270 @@ module.exports = {
 
   //get products without search
 
-  async getProducts(req, res) {
-    try {
-      console.log('req.query:', req.query);
-      const { page = 1, limit = 10 } = req.query;
-      const offset = (page - 1) * limit;
+//   async getProducts(req, res) {
+//     try {
+//       console.log('req.query:', req.query);
+//       const { page = 1, limit = 10 } = req.query;
+//       const offset = (page - 1) * limit;
   
-      console.log('limit:', limit);
-      console.log('offset:', offset);
+//       console.log('limit:', limit);
+//       console.log('offset:', offset);
   
-      // Get all records with necessary joins
-      const allProducts = await knex('products')
-        .join('categories', 'products.category_id', '=', 'categories.category_id')
-        .leftJoin('product_to_vendor', 'products.product_id', '=', 'product_to_vendor.product_id')
-        .leftJoin('vendors', 'product_to_vendor.vendor_id', '=', 'vendors.vendor_id')
-        .select('products.*', 'categories.category_name', 'vendors.vendor_name')
-        .where('products.status', 1);
+//       // Get all records with necessary joins
+//       const allProducts = await knex('products')
+//         .join('categories', 'products.category_id', '=', 'categories.category_id')
+//         .leftJoin('product_to_vendor', 'products.product_id', '=', 'product_to_vendor.product_id')
+//         .leftJoin('vendors', 'product_to_vendor.vendor_id', '=', 'vendors.vendor_id')
+//         .select('products.*', 'categories.category_name', 'vendors.vendor_name')
+//         .where('products.status', 1);
   
-      // Group vendors by product and eliminate duplicates
-      const groupedProducts = allProducts.reduce((acc, product) => {
-        const { product_id, vendor_name, ...productData } = product;
+//       // Group vendors by product and eliminate duplicates
+//       const groupedProducts = allProducts.reduce((acc, product) => {
+//         const { product_id, vendor_name, ...productData } = product;
   
-        if (!acc[product_id]) {
-          acc[product_id] = { ...product, vendors: [] };
-        }
+//         if (!acc[product_id]) {
+//           acc[product_id] = { ...product, vendors: [] };
+//         }
   
-        if (vendor_name) {
-          // Use a Set to ensure vendors are unique
-          acc[product_id].vendors = [...new Set([...acc[product_id].vendors, vendor_name])];
-        }
+//         if (vendor_name) {
+//           // Use a Set to ensure vendors are unique
+//           acc[product_id].vendors = [...new Set([...acc[product_id].vendors, vendor_name])];
+//         }
   
-        return acc;
-      }, {});
+//         return acc;
+//       }, {});
   
-      // Convert the grouped products back to an array
-      const productList = Object.values(groupedProducts);
+//       // Convert the grouped products back to an array
+//       const productList = Object.values(groupedProducts);
   
-      // Pagination in-memory
-      const totalItems = productList.length;
-      console.log(totalItems, 'totalItems');
-      const paginatedProducts = productList.slice(offset, (offset + parseInt(limit)));
-      console.log('products array:', paginatedProducts);
+//       // Pagination in-memory
+//       const totalItems = productList.length;
+//       console.log(totalItems, 'totalItems');
+//       const paginatedProducts = productList.slice(offset, (offset + parseInt(limit)));
+//       console.log('products array:', paginatedProducts);
   
-      // Send the paginated products and total count back
-      res.json({
-        products: paginatedProducts,
-        totalItems,
-        totalPages: Math.ceil(totalItems / limit),
-      });
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      res.status(500).json({ message: 'Error fetching products' });
-    }
+//       // Send the paginated products and total count back
+//       res.json({
+//         products: paginatedProducts,
+//         totalItems,
+//         totalPages: Math.ceil(totalItems / limit),
+//       });
+//     } catch (error) {
+//       console.error('Error fetching products:', error);
+//       res.status(500).json({ message: 'Error fetching products' });
+//     }
+//   }
+// ,  
+
+
+async getProducts(req, res) {
+  try {
+    // Extract b_id from the request query parameters
+    const { page = 1, limit = 10, b_id } = req.query;
+    const offset = (page - 1) * limit;
+
+    console.log('limit:', limit);
+    console.log('offset:', offset);
+    console.log('b_id:', b_id);  // Make sure b_id is passed correctly
+
+    // Get all records with necessary joins and filtering by b_id
+    const allProducts = await knex('products')
+      .join('categories', 'products.category_id', '=', 'categories.category_id')
+      .leftJoin('product_to_vendor', 'products.product_id', '=', 'product_to_vendor.product_id')
+      .leftJoin('vendors', 'product_to_vendor.vendor_id', '=', 'vendors.vendor_id')
+      .select('products.*', 'categories.category_name', 'vendors.vendor_name')
+      .where('products.status', 1)
+      .andWhere('products.b_id', '=', b_id);  // Filter by b_id
+
+    // Group vendors by product and eliminate duplicates
+    const groupedProducts = allProducts.reduce((acc, product) => {
+      const { product_id, vendor_name, ...productData } = product;
+
+      if (!acc[product_id]) {
+        acc[product_id] = { ...product, vendors: [] };
+      }
+
+      if (vendor_name) {
+        // Use a Set to ensure vendors are unique
+        acc[product_id].vendors = [...new Set([...acc[product_id].vendors, vendor_name])];
+      }
+
+      return acc;
+    }, {});
+
+    // Convert the grouped products back to an array
+    const productList = Object.values(groupedProducts);
+
+    // Pagination in-memory
+    const totalItems = productList.length;
+    console.log(totalItems, 'totalItems');
+    const paginatedProducts = productList.slice(offset, (offset + parseInt(limit)));
+    console.log('products array:', paginatedProducts);
+
+    // Send the paginated products and total count back
+    res.json({
+      products: paginatedProducts,
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+    });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ message: 'Error fetching products' });
   }
-,  
-  
-  async addProduct(req, res, next) {
-    try {
-        // Extract and validate the payload structure
-        const { productData, vendors } = req.body;
-
-        if (!productData || !vendors || !Array.isArray(vendors)) {
-            return res.status(400).json({ message: 'Invalid payload structure.' });
-        }
-
-        const { productName, category, quantity, unitPrice, unit, status } = productData;
-
-        if (!productName || !category || !quantity || !unitPrice || !unit || !status) {
-            return res.status(400).json({ message: 'Missing required product fields.' });
-        }
-
-        let productImage = null;
-
-        // Handle product image upload if a file is provided
-        if (req.file) {
-            const processedImage = await sharp(req.file.buffer)
-                .resize(50, 50)
-                .toBuffer();
-
-            const s3Params = {
-                Bucket: process.env.AWS_BUCKET_NAME,
-                Key: `product_images/${Date.now()}_${req.file.originalname}`,
-                Body: processedImage,
-                ContentType: req.file.mimetype,
-            };
-
-            const command = new PutObjectCommand(s3Params);
-            const s3Response = await s3.send(command);
-
-            productImage = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Params.Key}`;
-        }
-
-        // Create product data for database insertion
-        const productDataForDb = {
-            product_name: productName,
-            category_id: category,
-            quantity_in_stock: quantity,
-            unit_price: unitPrice,
-            product_image: productImage,
-            unit,
-            status,
-        };
-
-        // Insert product data into the database
-        const [productId] = await productModel.createProduct(productDataForDb);
-
-        // Validate vendors array and create mappings
-        if (vendors.length === 0) {
-            return res.status(400).json({ message: 'At least one vendor must be selected.' });
-        }
-
-        const productToVendorData = vendors.map((vendorId) => ({
-            product_id: productId,
-            vendor_id: vendorId,
-            status: 1, // Assuming status is 1 for active
-        }));
-
-        // Bulk insert into product-to-vendor mapping table
-        await productModel.createProductToVendorBulk(productToVendorData);
-
-        res.status(201).json({
-            message: 'Product added successfully',
-            product: { ...productDataForDb, product_id: productId, vendors },
-        });
-    } catch (err) {
-        console.error('Error adding product:', err);
-        next(err);
-    }
 }
+,
+  
+//   async addProduct(req, res, next) {
+//     try {
+//         // Extract and validate the payload structure
+//         const { productData, vendors } = req.body;
+
+//         if (!productData || !vendors || !Array.isArray(vendors)) {
+//             return res.status(400).json({ message: 'Invalid payload structure.' });
+//         }
+
+//         const { productName, category, quantity, unitPrice, unit, status } = productData;
+
+//         if (!productName || !category || !quantity || !unitPrice || !unit || !status) {
+//             return res.status(400).json({ message: 'Missing required product fields.' });
+//         }
+
+//         let productImage = null;
+
+//         // Handle product image upload if a file is provided
+//         if (req.file) {
+//             const processedImage = await sharp(req.file.buffer)
+//                 .resize(50, 50)
+//                 .toBuffer();
+
+//             const s3Params = {
+//                 Bucket: process.env.AWS_BUCKET_NAME,
+//                 Key: `product_images/${Date.now()}_${req.file.originalname}`,
+//                 Body: processedImage,
+//                 ContentType: req.file.mimetype,
+//             };
+
+//             const command = new PutObjectCommand(s3Params);
+//             const s3Response = await s3.send(command);
+
+//             productImage = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Params.Key}`;
+//         }
+
+//         // Create product data for database insertion
+//         const productDataForDb = {
+//             product_name: productName,
+//             category_id: category,
+//             quantity_in_stock: quantity,
+//             unit_price: unitPrice,
+//             product_image: productImage,
+//             unit,
+//             status,
+//         };
+
+//         // Insert product data into the database
+//         const [productId] = await productModel.createProduct(productDataForDb);
+
+//         // Validate vendors array and create mappings
+//         if (vendors.length === 0) {
+//             return res.status(400).json({ message: 'At least one vendor must be selected.' });
+//         }
+
+//         const productToVendorData = vendors.map((vendorId) => ({
+//             product_id: productId,
+//             vendor_id: vendorId,
+//             status: 1, // Assuming status is 1 for active
+//         }));
+
+//         // Bulk insert into product-to-vendor mapping table
+//         await productModel.createProductToVendorBulk(productToVendorData);
+
+//         res.status(201).json({
+//             message: 'Product added successfully',
+//             product: { ...productDataForDb, product_id: productId, vendors },
+//         });
+//     } catch (err) {
+//         console.error('Error adding product:', err);
+//         next(err);
+//     }
+// }
+
+
+async addProduct(req, res, next) {
+  try {
+    console.log('Request Body:', req.body);
+      const { productData, vendors, branchId } = req.body;
+      console.log(req.body);
+
+      if (!productData || !vendors || !Array.isArray(vendors) || !branchId) {
+          return res.status(400).json({ message: 'Invalid payload structure.' });
+      }
+
+      const { productName, category, quantity, unitPrice, unit, status } = productData;
+
+      if (!productName || !category || !quantity || !unitPrice || !unit || !status) {
+          return res.status(400).json({ message: 'Missing required product fields.' });
+      }
+
+      let productImage = null;
+
+      // Handle product image upload if a file is provided
+      if (req.file) {
+          const processedImage = await sharp(req.file.buffer)
+              .resize(50, 50)
+              .toBuffer();
+
+          const s3Params = {
+              Bucket: process.env.AWS_BUCKET_NAME,
+              Key: `product_images/${Date.now()}_${req.file.originalname}`,
+              Body: processedImage,
+              ContentType: req.file.mimetype,
+          };
+
+          const command = new PutObjectCommand(s3Params);
+          const s3Response = await s3.send(command);
+
+          productImage = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Params.Key}`;
+      }
+
+      // Create product data for database insertion with branchId
+      const productDataForDb = {
+          product_name: productName,
+          category_id: category,
+          quantity_in_stock: quantity,
+          unit_price: unitPrice,
+          product_image: productImage,
+          unit,
+          status,
+          b_id: branchId,  // Include branch ID in the product data
+      };
+
+      // Insert product data into the database
+      const [productId] = await productModel.createProduct(productDataForDb);
+
+      // Validate vendors array and create mappings
+      if (vendors.length === 0) {
+          return res.status(400).json({ message: 'At least one vendor must be selected.' });
+      }
+
+      const productToVendorData = vendors.map((vendorId) => ({
+          product_id: productId,
+          vendor_id: vendorId,
+          status: 1, // Assuming status is 1 for active
+      }));
+
+      // Bulk insert into product-to-vendor mapping table
+      await productModel.createProductToVendorBulk(productToVendorData);
+
+      res.status(201).json({
+          message: 'Product added successfully',
+          product: { ...productDataForDb, product_id: productId, vendors },
+      });
+  } catch (err) {
+      console.error('Error adding product:', err);
+      next(err);
+  }
+}
+
 ,
   async getCategories(req, res, next) {
     try {

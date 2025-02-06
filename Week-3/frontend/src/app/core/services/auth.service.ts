@@ -21,6 +21,7 @@ export class AuthService {
             localStorage.setItem('userId', response.userId);
             localStorage.setItem('role', response.role);
             localStorage.setItem('first_name', response.first_name);
+            localStorage.setItem('b_id', response.b_id);
           } else {
             console.error("Missing first_name or role in response", response);
           }
@@ -35,6 +36,7 @@ export class AuthService {
       localStorage.setItem('userId', response.userId);
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('b_id', response.b_id);
 
       if (response.first_name) {
         localStorage.setItem('first_name', response.first_name); // Store first_name
@@ -93,6 +95,9 @@ export class AuthService {
       id: id,
       username: username
     };
+  }
+  getb_id():any{
+    return localStorage.getItem('b_id');
   }
  
 }

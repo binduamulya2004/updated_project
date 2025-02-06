@@ -33,6 +33,7 @@ export class RegisterComponent {
         ],
       ],
       role: ['', Validators.required],
+      b_id: ['', Validators.required]
     });
   }
 

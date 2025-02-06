@@ -575,6 +575,21 @@ rel="stylesheet"
                         </select>
                     </div>
 
+                    <!-- Branch Selection -->
+                    <div class="mb-3">
+                        <label for="branch" class="form-label">Branch *</label>
+                        <select id="branch" class="form-select" formControlName="branchId">
+                            <option value="1">INDIA</option>
+                            <option value="2">USA</option>
+                            <option value="3">AUSTRALIA</option>
+                            <option value="4">JAPAN</option>
+                        </select>
+                        <small *ngIf="addProductForm.get('b_id')?.invalid && addProductForm.get('b_id')?.touched" class="text-danger">
+                            Branch selection is required.
+                        </small>
+                    </div>
+
+
                     <!-- Upload Image -->
                     <div class="mb-3">
                         <label for="productImage" class="form-label">Upload Product Image</label>

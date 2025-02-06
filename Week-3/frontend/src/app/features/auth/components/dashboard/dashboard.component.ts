@@ -105,6 +105,7 @@ export class DashboardComponent implements OnInit {
   role: string | null;
   TOTALPRODUCTS: number=0;
   noHistoryMessage: any;
+  bid:number | undefined;
 
 
   constructor(private http: HttpClient,  private router: Router, private fb: FormBuilder,private authService: AuthService,private sanitizer: DomSanitizer) {
@@ -116,6 +117,7 @@ export class DashboardComponent implements OnInit {
       unitPrice: ['', [Validators.required, Validators.min(0)]],
       unit: ['', Validators.required],
       status: ['', Validators.required],
+      branchId: [null, Validators.required], 
     });
     this.role = localStorage.getItem('role');
   }
@@ -125,6 +127,8 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('role in frontend::',this.role);
+    this.bid =this.authService.getb_id()
+    console.log('bid ::',this.bid);
     // Get the logged-in user's details after verifying the token
     this.fetchUserDetails();
     this.getVendorsCount();
@@ -628,72 +632,143 @@ export class DashboardComponent implements OnInit {
 
 
 
-  addProduct() {
-    if (this.addProductForm.valid) {
-        const productData = this.addProductForm.value;
-        console.log('***** in frontend ');
-        console.log(productData);
+//   addProduct() {
+//     if (this.addProductForm.valid) {
+//         const productData = this.addProductForm.value;
+//         console.log('***** in frontend ');
+//         console.log(productData);
 
-        const vendors = productData.vendor; // Array of selected vendor IDs
-        console.log(vendors);
-        delete productData.vendor; // Remove vendor field from productData to handle separately
-        console.log(vendors);
+//         const vendors = productData.vendor; // Array of selected vendor IDs
+//         console.log(vendors);
+//         delete productData.vendor; // Remove vendor field from productData to handle separately
+//         console.log(vendors);
 
-        this.http
-            .post(`${environment.apiUrl}/auth/products`, { productData, vendors }) // Send productData and vendors array
-            .subscribe(
-                (response: any) => {
-                    console.log('Product added successfully:', response);
-                    const newProduct = response.product;
+//         this.http
+//             .post(`${environment.apiUrl}/auth/products`, { productData, vendors }) // Send productData and vendors array
+//             .subscribe(
+//                 (response: any) => {
+//                     console.log('Product added successfully:', response);
+//                     const newProduct = response.product;
 
-                    this.products.push(newProduct); // Update the products array with the new product
+//                     this.products.push(newProduct); // Update the products array with the new product
 
-                    if (this.selectedFile) {
-                        const formData = new FormData();
-                        formData.append('product_image', this.selectedFile);
-                        formData.append('productId', newProduct.product_id); // Include product ID in the form data
+//                     if (this.selectedFile) {
+//                         const formData = new FormData();
+//                         formData.append('product_image', this.selectedFile);
+//                         formData.append('productId', newProduct.product_id); // Include product ID in the form data
 
-                        const token = this.authService.getAccessToken();
-                        const headers = new HttpHeaders({
-                            Authorization: `Bearer ${token}`,
-                        });
+//                         const token = this.authService.getAccessToken();
+//                         const headers = new HttpHeaders({
+//                             Authorization: `Bearer ${token}`,
+//                         });
 
-                        this.isUploading = true;
+//                         this.isUploading = true;
 
-                        this.http
-                            .post(
-                                `${environment.apiUrl}/auth/upload-product-image`,
-                                formData,
-                                { headers }
-                            )
-                            .subscribe(
-                                (uploadResponse: any) => {
-                                    console.log('File uploaded successfully:', uploadResponse);
-                                    newProduct.product_image = uploadResponse.url; // Update the product image URL
-                                    this.isUploading = false;
-                                    this.closeProductModal();
-                                    alert('Product added successfully!');
+//                         this.http
+//                             .post(
+//                                 `${environment.apiUrl}/auth/upload-product-image`,
+//                                 formData,
+//                                 { headers }
+//                             )
+//                             .subscribe(
+//                                 (uploadResponse: any) => {
+//                                     console.log('File uploaded successfully:', uploadResponse);
+//                                     newProduct.product_image = uploadResponse.url; // Update the product image URL
+//                                     this.isUploading = false;
+//                                     this.closeProductModal();
+//                                     alert('Product added successfully!');
 
-                                    this.loadProducts();
-                                },
-                                (error) => {
-                                    console.error('Error uploading file:', error);
-                                    this.isUploading = false;
-                                }
-                            );
-                    } else {
-                        this.closeProductModal();
-                        alert('Product added successfully!');
-                    }
-                },
-                (error) => {
-                    console.error('Error adding product:', error);
-                }
-            );
-    } else {
-        console.error('Form is invalid');
-    }
+//                                     this.loadProducts();
+//                                 },
+//                                 (error) => {
+//                                     console.error('Error uploading file:', error);
+//                                     this.isUploading = false;
+//                                 }
+//                             );
+//                     } else {
+//                         this.closeProductModal();
+//                         alert('Product added successfully!');
+//                     }
+//                 },
+//                 (error) => {
+//                     console.error('Error adding product:', error);
+//                 }
+//             );
+//     } else {
+//         console.error('Form is invalid');
+//     }
+// }
+
+addProduct() {
+  if (this.addProductForm.valid) {
+      const productData = this.addProductForm.value;
+      console.log('***** in frontend ');
+      console.log(productData);
+
+      const vendors = productData.vendor; // Array of selected vendor IDs
+      const branchId = productData.branchId;   // Get selected branch ID
+      console.log('barnch id ::', branchId);
+      console.log(vendors);
+      delete productData.vendor; // Remove vendor field from productData to handle separately
+      delete productData.b_id;    // Remove branch field from productData to handle separately
+      console.log(vendors);
+
+      this.http
+          .post(`${environment.apiUrl}/auth/products`, { productData, vendors, branchId }) // Send productData, vendors array, and branchId
+          .subscribe(
+              (response: any) => {
+                  console.log('Product added successfully:', response);
+                  const newProduct = response.product;
+
+                  this.products.push(newProduct); // Update the products array with the new product
+
+                  if (this.selectedFile) {
+                      const formData = new FormData();
+                      formData.append('product_image', this.selectedFile);
+                      formData.append('productId', newProduct.product_id); // Include product ID in the form data
+
+                      const token = this.authService.getAccessToken();
+                      const headers = new HttpHeaders({
+                          Authorization: `Bearer ${token}`,
+                      });
+
+                      this.isUploading = true;
+
+                      this.http
+                          .post(
+                              `${environment.apiUrl}/auth/upload-product-image`,
+                              formData,
+                              { headers }
+                          )
+                          .subscribe(
+                              (uploadResponse: any) => {
+                                  console.log('File uploaded successfully:', uploadResponse);
+                                  newProduct.product_image = uploadResponse.url; // Update the product image URL
+                                  this.isUploading = false;
+                                  this.closeProductModal();
+                                  alert('Product added successfully!');
+
+                                  this.loadProducts();
+                              },
+                              (error) => {
+                                  console.error('Error uploading file:', error);
+                                  this.isUploading = false;
+                              }
+                          );
+                  } else {
+                      this.closeProductModal();
+                      alert('Product added successfully!');
+                  }
+              },
+              (error) => {
+                  console.error('Error adding product:', error);
+              }
+          );
+  } else {
+      console.error('Form is invalid');
+  }
 }
+
 
 
   saveProductData(productData: any) {
@@ -1137,11 +1212,14 @@ applyFilters(): void {
 }
 
 
+
 // Load Products with dynamic filtering based on selected columns
 loadProducts(): void {
+
   const params = new HttpParams()
     .set('page', this.currentPage.toString())
-    .set('limit', this.itemsPerPage.toString());
+    .set('limit', this.itemsPerPage.toString())
+    .set('b_id', this.bid?.toString() || '');
 
   this.http
     .get<{ products: any[]; totalItems: number }>(
