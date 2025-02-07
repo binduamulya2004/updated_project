@@ -20,6 +20,7 @@ export interface User {
   providedIn: 'root'
 })
 export class ChatService {
+  //ChatService injects the Socket instance.
   constructor(private socket: Socket) {}
  
   // Connection methods

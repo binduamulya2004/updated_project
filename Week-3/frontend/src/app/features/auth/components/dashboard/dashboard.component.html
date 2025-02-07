@@ -115,9 +115,7 @@ rel="stylesheet"
                                 data-bs-target="#addProductModal" [attr.disabled]="role === 'user' ? true : null" >
                                 <i class="bi bi-plus-circle"></i> Add Product
                             </button>
-                            <button class="btn btn-primary me-2  btn-violet" (click)="redirecttofilestatus()">Status
-
-                            </button>
+                            
                         </div>
                     </div>
                 </div>
@@ -166,19 +164,29 @@ rel="stylesheet"
                 </div>
   
 
-                <!-- View and Cart Buttons -->
+               <!-- View and Cart Buttons -->
                 <div class="d-flex mb-3">
-                    <button class="btn"  [ngClass]="{'btn-violet': !showCart, 'btn-outline-secondary': showCart}"
+                    <button class="btn" 
+                        [ngClass]="{'btn-violet': showAll, 'btn-outline-secondary': !showAll}"
                         (click)="toggleTable('all')">View All</button>
-                    <button class="btn" [ngClass]="{'btn-violet': showCart, 'btn-outline-secondary': !showCart} "
-                        (click)="toggleTable('cart')" [attr.disabled]="role === 'manager' ? true : null" >Cart</button>
-                        <div class="badge bg-light text-dark rounded-pill p-2 me-3">
-                            <strong>{{ this.TOTALPRODUCTS }}</strong> Products
-                        </div>
+
+                    <button class="btn" 
+                        [ngClass]="{'btn-violet': showCart, 'btn-outline-secondary': !showCart}" 
+                        (click)="toggleTable('cart')" 
+                        [attr.disabled]="role === 'manager' ? true : null">Cart</button>
+
+                    <div class="badge bg-light text-dark rounded-pill p-2 me-3">
+                        <strong>{{ TOTALPRODUCTS }}</strong> Products
+                    </div>
+
+                    <button class="btn"  
+                        [ngClass]="{'btn-violet': showStatus, 'btn-outline-secondary': !showStatus}"
+                        (click)="toggleTable('status')">Status</button>
                 </div>
- 
+
+
                 <!-- Inventory Table -->
-                <div *ngIf="!showCart">
+                <div *ngIf="showAll">
                     <table class="table table-striped table-bordered table-hover mb-0">
                         <thead class="table-light">
                             <tr>
@@ -328,6 +336,55 @@ rel="stylesheet"
                         </ul>
                     </nav>
                 </div>
+
+
+                
+                <div *ngIf="showStatus">
+                    <div class="files container-fluid">
+                        
+                    
+                        <div>
+                            <h2>File Status</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="container mt-5">
+                        <table class="table table-bordered file-status-table">
+                            <thead>
+                                <tr>
+                                    <th>File Name</th>
+                                    <th>File Status</th>
+                                    <th>Download Error File</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let file of importFiles">
+                                    <td>{{ file.file_name }}</td>
+                                    <td>
+                                        <span [ngClass]="{
+                                            'status-complete': file.status === 'completed',
+                                            'status-error': file.status === 'error',
+                                            'status-pending': file.status === 'pending'
+                                        }" class="status-label">
+                                            {{ file.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button *ngIf="file.status === 'error'" (click)="downloadErrorFile(file.error_file_url)" class="btn btn-danger">
+                                            Download Error File
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+
+                </div>
+             
+
+
+
                 <!-- End of table -->
             </div>
             <!-- End of bg-white p-4 rounded -->
@@ -340,6 +397,9 @@ rel="stylesheet"
                 <button class="btn btn-outline-violet" (click)="nextPage()"
                     [disabled]="currentPage === totalPages">Next</button>
             </div>
+
+
+
         </div>
 
 
@@ -772,9 +832,7 @@ rel="stylesheet"
 </div>
 
 
-<div class="chat">
-    <button  class="btn btn-outline-violet" (click)="redirectTochatApp()">Real Time Chat Application</button>
-</div>
+
 <button (click)="redirectTochatAppp()" class="btn btn-primary position-fixed bottom-0 end-0 m-3" style="background-color: #7749F8; border-radius: 50%; width: 60px; height: 60px;">
     <i class="bi bi-chat-dots" style="font-size: 25px;"></i>
   </button>

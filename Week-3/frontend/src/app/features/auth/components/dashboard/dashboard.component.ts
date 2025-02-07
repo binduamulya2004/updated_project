@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
   selectedProductForEdit: any;
   editSelectedFile: File | null = null;
   fileData: any[] = [];
-  showCart: boolean = false;
+  // showCart: boolean = false;
   currentCartPage: number = 1;
   totalCartPages: number = 1;
   cartPageSize: number = 5; 
@@ -93,6 +93,10 @@ export class DashboardComponent implements OnInit {
   cartPages: number[] = [];
   cartProducts: any[] = [];
   userId: any;
+
+  showCart: boolean = false;
+  showStatus: boolean =false;
+  showAll:boolean =false;
   
 
   files: File[] = [];
@@ -106,7 +110,7 @@ export class DashboardComponent implements OnInit {
   TOTALPRODUCTS: number=0;
   noHistoryMessage: any;
   bid:number | undefined;
-
+  importFiles: any[] = [];
 
   constructor(private http: HttpClient,  private router: Router, private fb: FormBuilder,private authService: AuthService,private sanitizer: DomSanitizer) {
     this.addProductForm = this.fb.group({
@@ -138,6 +142,7 @@ export class DashboardComponent implements OnInit {
     this.getVendors();
     this.fetchCartPage(this.currentCartPage);
     this.fetchUploadedFiles();
+    this.fetchImportFiles();
   }
   // ngDoCheck(): void {
   //   // console.log('ngDoCheck Called');
@@ -147,16 +152,22 @@ export class DashboardComponent implements OnInit {
   //   }
   // }
 
- 
-
   toggleTable(view: string): void {
-    if (view === 'cart') {
-      this.showCart = true;
-    } else {
-      this.showCart = false;
-      this.flag = 1;
+    // Reset all visibility flags
+    this.showAll = false;
+    this.showCart = false;
+    this.showStatus = false;
+
+    // Enable only the selected view
+    if (view === 'all') {
+        this.showAll = true;
+    } else if (view === 'cart') {
+        this.showCart = true;
+    } else if (view === 'status') {
+        this.showStatus = true;
     }
-  }
+}
+
 
   updateQuantity(product:any, change: number): void {
     console.log(change);
@@ -1359,6 +1370,27 @@ redirectTochatAppp() {
 
 
 
+fetchImportFiles() {
+  // Correct string interpolation for the URL
+  this.http.get(`${environment.apiUrl}/auth/retrieve-files`).subscribe(
+    (files) => {
+      this.importFiles = files as any[];
+    },
+    (error) => {
+      console.error('Error fetching import files:', error);
+    }
+  );
+}
+
+downloadErrorFile(errorFileUrl: string) {
+  const link = document.createElement('a');
+  link.href = errorFileUrl;
+  link.download = errorFileUrl.split('/').pop() || 'default-filename'; // Optional: Set the filename based on the URL
+  link.click();
+}
+redirecttodashboard(){
+  this.router.navigate(['./dashboard']);
+}
 
 
 }

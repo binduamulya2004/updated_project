@@ -38,9 +38,9 @@
       cursor: pointer;
  
       &.active {
-        background: #0366d6;
+        background: #7a26cc;
         color: white;
-        border-color: #0366d6;
+        border-color: #7a26cc;
       }
     }
   }
@@ -88,14 +88,14 @@
  
   button {
     padding: 8px 15px;
-    background: #2ea44f;
+    background: #65e489;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
  
     &:hover {
-      background: #2c974b;
+      background: #65e489;
     }
   }
 }
@@ -150,7 +150,7 @@
  
     &.own-message {
       align-self: flex-end;
-      background: #0366d6;
+      background: #7a26cc;
       color: white;
  
       .message-header {
@@ -193,20 +193,20 @@
  
     &:focus {
       outline: none;
-      border-color: #0366d6;
+      border-color: #7a26cc;
     }
   }
  
   button {
     padding: 10px 20px;
-    background: #0366d6;
+    background: #7a26cc;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
  
     &:hover {
-      background: #0256b4;
+      background: #7a26cc;
     }
   }
 }
@@ -235,7 +235,7 @@
  
     &.selected {
       background: #f1f8ff;
-      border-left: 3px solid #0366d6;
+      border-left: 3px solid #7a26cc;
     }
  
     .user-item-content {

@@ -29,7 +29,7 @@ const config: SocketIoConfig = {
     CommonModule,
     FormsModule,
     RouterModule.forChild(routes),
-    SocketIoModule.forRoot(config)
+    SocketIoModule.forRoot(config)//SocketIoModule.forRoot(config) initializes the connection to http://localhost:3000s
   ],
   providers: [
     ChatService

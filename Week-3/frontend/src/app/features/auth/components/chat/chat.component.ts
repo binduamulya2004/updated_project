@@ -87,15 +87,17 @@ export class ChatComponent implements OnInit, OnDestroy {
     return message.sender.username === this.currentUser.username;
   }
  
+  // If the current user is the sender(i.e., isOwnMessage(message) returns true) 
   private addMessageToConversation(message: Message): void {
     const otherUsername = this.isOwnMessage(message) ?
       (this.selectedUser?.username || message.sender.username) :
       message.sender.username;
     const existingMessages = this.getMessagesFromStorage(otherUsername);
+     //This function retrieves all previous messages for the conversation with otherUsername
     if (!existingMessages.some(m =>
         m.timestamp === message.timestamp &&
         m.sender.username === message.sender.username &&
-        m.text === message.text)) {
+        m.text === message.text)) { //Before adding the new message, it checks if an identical message (same timestamp, sender, and text) already exists in the existingMessages. This prevents adding duplicate messages to the conversation.
       const updatedMessages = [...existingMessages, message];
       this.saveMessagesToStorage(otherUsername, updatedMessages);
       if (this.selectedUser && this.selectedUser.username === otherUsername) {
@@ -106,6 +108,7 @@ export class ChatComponent implements OnInit, OnDestroy {
  
   private getMessagesFromStorage(otherUsername: string): Message[] {
     const key = this.getStorageKey(this.currentUser.username, otherUsername);
+   
     const stored = sessionStorage.getItem(key);
     const messages = stored ? JSON.parse(stored) : [];
     console.log('Retrieved messages from storage:', { key, messages });
@@ -131,9 +134,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
  
+  // It checks whether the message belongs to the current room, ensures that the message has not been added before (based on a unique message ID), and then stores the message in the appropriate place.
   private addGroupMessage(message: Message): void {
     if (!this.currentRoom || message.room !== this.currentRoom) return;
     const existingMessages = this.getGroupMessagesFromStorage(this.currentRoom);
+    //check if the msg is already present
     if (!existingMessages.some(m => m.messageId === message.messageId)) {
       const updatedMessages = [...existingMessages, message];
       this.saveGroupMessagesToStorage(this.currentRoom, updatedMessages);
@@ -158,7 +163,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   private getGroupStorageKey(roomName: string): string {
     return `group_messages_${roomName}`;
   }
- 
+ //Switches the chat to private mode with the selected user.
   selectUser(user: UserWithNotification): void {
     console.log('Selecting user:', user);
     this.chatMode = 'private';
@@ -167,14 +172,15 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.messages = this.getMessagesFromStorage(user.username);
     this.currentRoom = null;
   }
- 
+  
+  // /: Creates a new chat room.
   createRoom(): void {
     if (this.newRoomName.trim()) {
       this.chatService.createRoom(this.newRoomName.trim());
       this.newRoomName = '';
     }
   }
- 
+ // Joins an existing chat room.
   joinRoom(roomName: string): void {
     this.chatMode = 'group';
     this.currentRoom = roomName;

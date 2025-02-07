@@ -54,28 +54,30 @@ io.on('connection', (socket) => {
   });
  
   // Handle private messages
-  socket.on('private-message', ({ to, message }) => {
-    const sender = activeUsers.get(socket.id);
-    if (sender && to) {
-      const messageData = {
-        text: message,
-        sender: { ...sender, id: socket.id },
-        timestamp: new Date(),
-        type: 'private'
-      };
-     
-      // Send to recipient
-      socket.to(to).emit('private-message', messageData);
-      // Send back to sender
-      socket.emit('private-message', messageData);
-     
-      console.log('Private message sent:', {
-        from: sender.username,
-        to: to,
-        message: messageData
-      });
-    }
-  });
+socket.on('private-message', ({ to, message }) => {
+  const sender = activeUsers.get(socket.id);  // Retrieve sender based on socket ID
+  if (sender && to) {
+    const messageData = {
+      text: message,
+      sender: { ...sender, id: socket.id },
+      timestamp: new Date(),
+      type: 'private'
+    };
+
+    // Send to recipient
+    socket.to(to).emit('private-message', messageData);  // Emit to recipient
+
+    // Send back to sender
+    socket.emit('private-message', messageData);  // Emit back to sender
+
+    console.log('Private message sent:', {
+      from: sender.username,
+      to: to,
+      message: messageData
+    });
+  }
+});
+
  
   // Handle group chat functionality
   socket.on('create-room', (roomName) => {
