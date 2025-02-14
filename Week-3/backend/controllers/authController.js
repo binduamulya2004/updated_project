@@ -1292,8 +1292,8 @@ async getUploadedFiles(req, res) {
         const command = new GetObjectCommand(params);
         const data = await s3.send(command);
 
-        res.setHeader('Content-Type', data.ContentType);
-        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+        // res.setHeader('Content-Type', data.ContentType);
+        // res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
         data.Body.pipe(res);
       } else {
           // Download multiple files as a zip

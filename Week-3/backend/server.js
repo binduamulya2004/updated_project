@@ -194,11 +194,6 @@ socket.on('private-message', ({ to, message }) => {
 });
 
 
-
-
-
-
-
 // Set up rate limiting middleware
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

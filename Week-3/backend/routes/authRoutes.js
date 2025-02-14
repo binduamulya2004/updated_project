@@ -80,3 +80,4 @@ router.get('/products', authenticate, authController.getProducts);
 
 module.exports = router;
 
+

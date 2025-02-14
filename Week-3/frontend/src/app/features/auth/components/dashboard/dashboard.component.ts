@@ -921,7 +921,7 @@ addProduct() {
   // Logout method to clear localStorage and redirect to login page
   logout(): void {
     this.authService.clearTokens();
-    window.location.href = '/login'; // Redirect to login page
+    this.router.navigate(['/login']); // Redirect to login page
   }
 
   //right side of the container

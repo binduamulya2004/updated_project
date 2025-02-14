@@ -25,3 +25,10 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+
+
+// commonjs and es modules difference, and how to make them work both in a server ?
+// multer workings
+// how memory leaks happens, how can prevent them
+// dom sanitizer usage.. why do we need to use `DomSanitizer`   
